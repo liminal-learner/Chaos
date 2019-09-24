@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+plt.ion()
+from time import sleep
 
 class Simulator:
     eps = 1e-16
@@ -109,7 +111,7 @@ class Simulator:
         self.first_attractor = options[np.arange(options.shape[0]), follows[:,0], np.newaxis]
         self.second_attractor = options[np.arange(options.shape[0]), follows[:,1], np.newaxis]
 
-    def __update_positions(self):
+    def _update_positions(self):
         """
         This allows each agent to jump directly to the third vertex that would create an equilateral triangle
         with the agent and the agent's two targets. However, everyone is jumping at the same time so these
@@ -187,10 +189,13 @@ class Simulator:
                 else:
                     line.set_xdata(self.X[1:, self.iteration])
                     line.set_ydata(self.Y[1:, self.iteration])
+
         self.fig.canvas.draw()
+        # This is crucial for viewing the plots from the command line:
+        plt.pause(1)
 
         if plot_sides:
-            for agent in range(self.X.shape[0]):
+            for agent in range(self.num_agents):
                 # Grab the positions for the attractors of each agent & plot the triangle in green at the end
                 X_triangle = np.hstack((self.X[agent, self.iteration], \
                                         self.X[self.first_attractor.item(agent), self.iteration], \
@@ -210,7 +215,7 @@ class Simulator:
     def run(self, plot_trajectories = True, plot_convergence = True):
 
         if plot_trajectories:
-            self.fig, (self.ax1, self.ax2) = plt.subplots(nrows = 2, ncols = 1) # two axes on figure
+            self.fig, (self.ax1, self.ax2) = plt.subplots(nrows = 2, ncols = 1, figsize=(10,10)) # two axes on figure
             self.plot_positions(initialize_plot = True)
 
         while self.iteration < self.max_iterations:
@@ -228,7 +233,7 @@ class Simulator:
                     self.converged_at_iteration = self.iteration
                     break
 
-            self.__update_positions()
+            self._update_positions()
 
             # Update
             self.iteration += 1
@@ -243,7 +248,7 @@ class Simulator:
             plot_sides = True
 
             if not plot_trajectories:
-                self.fig, (self.ax1, self.ax2) = plt.subplots(nrows = 2, ncols = 1)
+                self.fig, (self.ax1, self.ax2) = plt.subplots(nrows = 2, ncols = 1, figsize=(10,10))
                 initialize = True
             else:
                 initialize = False
