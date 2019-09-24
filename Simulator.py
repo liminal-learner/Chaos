@@ -1,7 +1,10 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
 class Simulator:
     eps = 1e-16
 
-    def __init(self, num_agents = 15, max_iterations = 1000, step_size = None, \
+    def __init__(self, num_agents = 15, max_iterations = 1000, step_size = None, \
                 convergence_tol = 0.001, x_bounds = (0,1), y_bounds = (0, 1)):
 
         # convergence_tol : % of dimensions of the room
@@ -37,9 +40,9 @@ class Simulator:
 
         y_diff = first_vertex[1] - second_vertex[1]
 
-        if y_diff < eps:
+        if y_diff < Simulator.eps:
             # avoid division by zero
-            y_diff += eps
+            y_diff += Simulator.eps
 
         # Negative Reciprocal slope of line joining first and second vertex:
         slope = -(first_vertex[0] - second_vertex[0]) / y_diff
@@ -62,8 +65,8 @@ class Simulator:
     def __initialize_positions(self):
 
         # Container for the whole simulation:
-        self.X = np.zeros((self.num_agents, self.num_iterations + 1))
-        self.Y = np.zeros((self.num_agents, self.num_iterations + 1))
+        self.X = np.zeros((self.num_agents, self.max_iterations + 1))
+        self.Y = np.zeros((self.num_agents, self.max_iterations + 1))
 
         # Initialize first positions:
         self.X[:,0] = np.random.rand(self.num_agents,)
@@ -88,7 +91,7 @@ class Simulator:
         follows = np.zeros((self.num_agents, 2))
 
         # First attractor:
-        follows[:, 0, np.newaxis] = np.round( (options.shape[1] - 1) * np.random.rand(num_agents, 1) ).astype(int)
+        follows[:, 0, np.newaxis] = np.round( (options.shape[1] - 1) * np.random.rand(self.num_agents, 1) ).astype(int)
 
         # Second attractor:
         for agent in range(self.num_agents):
@@ -112,15 +115,15 @@ class Simulator:
         with the agent and the agent's two targets. However, everyone is jumping at the same time so these
         triangles are not likely to be formed until later in the simulation (if ever)
         """
-        for agent in range(self.X.shape[0]):
+        for agent in range(self.num_agents):
 
             # Find the points where you want to go to complete the triangle
-            first_vertex = (self.X.item((self.first_attracotr.item(agent), self.iteration)), \
+            first_vertex = (self.X.item((self.first_attractor.item(agent), self.iteration)), \
                self.Y.item(self.first_attractor.item(agent), self.iteration))
             second_vertex = (self.X.item((self.second_attractor.item(agent), self.iteration)), \
                self.Y.item(self.second_attractor.item(agent), self.iteration))
 
-            options_x, options_y = find_third_vertex(first_vertex, second_vertex)
+            options_x, options_y = self.__find_third_vertex(first_vertex, second_vertex)
 
             # Find the closest of the two vertices to your current position, or the one that is inside the room:
             # For now, just don't update position if both are out of bounds
@@ -171,7 +174,7 @@ class Simulator:
         else:
             # Plot the new position
             self.ax1.set_title("Iteration = {}".format(self.iteration))
-            for lin_num, line in enumerate(self.ax.lines):
+            for lin_num, line in enumerate(self.ax1.lines):
                 if lin_num==0:
                     line.set_xdata(self.X[0, self.iteration])
                     line.set_ydata(self.Y[0, self.iteration])
@@ -204,11 +207,11 @@ class Simulator:
             self.ax1.set_ylim(0.9 * min(self.Y[:, self.iteration]), 1.1 * max(self.Y[:, self.iteration]))
             self.ax1.set_aspect('equal')
 
-    def run(plot_trajectories = True, plot_convergence = True):
+    def run(self, plot_trajectories = True, plot_convergence = True):
 
         if plot_trajectories:
             self.fig, (self.ax1, self.ax2) = plt.subplots(nrows = 2, ncols = 1) # two axes on figure
-            self.__plot_positions(initialize_plot = True)
+            self.plot_positions(initialize_plot = True)
 
         while self.iteration < self.max_iterations:
 
@@ -225,13 +228,13 @@ class Simulator:
                     self.converged_at_iteration = self.iteration
                     break
 
-            self.X, self.Y = self.__update_positions()
+            self.__update_positions()
 
             # Update
             self.iteration += 1
 
             if plot_trajectories:
-                self.__plot_positions(initialize_plot = False)
+                self.plot_positions(initialize_plot = False)
 
         if plot_convergence:
             # Plot the end positions of the agents, even if we weren't plotting
@@ -245,7 +248,7 @@ class Simulator:
             else:
                 initialize = False
 
-            self.__plot_positions(initialize, plot_sides, zoom = True)
+            self.plot_positions(initialize, plot_sides, zoom = True)
 
             self.ax2=plt.subplot(2,1,2)
             self.ax2.plot(self.mean_step)
