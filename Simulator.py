@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 plt.ion()
-from time import sleep
 
 class Simulator:
     eps = 1e-16
@@ -215,7 +214,7 @@ class Simulator:
     def run(self, plot_trajectories = True, plot_convergence = True):
 
         if plot_trajectories:
-            self.fig, (self.ax1, self.ax2) = plt.subplots(nrows = 2, ncols = 1, figsize=(10,10)) # two axes on figure
+            self.fig, self.ax1 = plt.subplots(nrows = 1, ncols = 1, figsize=(8, 8)) # two axes on figure
             self.plot_positions(initialize_plot = True)
 
         while self.iteration < self.max_iterations:
@@ -248,17 +247,18 @@ class Simulator:
             plot_sides = True
 
             if not plot_trajectories:
-                self.fig, (self.ax1, self.ax2) = plt.subplots(nrows = 2, ncols = 1, figsize=(10,10))
+                self.fig, self.ax1  = plt.subplots(nrows = 1, ncols = 1, figsize=(8, 8))
                 initialize = True
             else:
                 initialize = False
 
             self.plot_positions(initialize, plot_sides, zoom = True)
 
-            self.ax2=plt.subplot(2,1,2)
+            self.fig2, self.ax2  = plt.subplots(nrows = 1, ncols = 1, figsize=(8, 4))
             self.ax2.plot(self.mean_step)
             self.ax2.set_ylabel("Mean Step Size")
             self.ax2.set_xlabel("Iteration")
             self.ax2.set_title("Motion of Agents")
+
 
 # Note if this converges before num_iterations, there will be zeros for last part of X,Y
