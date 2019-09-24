@@ -1,6 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 plt.ion()
+plt.rcParams['axes.labelsize'] = 18
+plt.rcParams['axes.titlesize'] = 20
+plt.rcParams['font.size'] = 16
+plt.rcParams['lines.linewidth'] = 2.0
+plt.rcParams['lines.markersize'] = 8
+plt.rcParams['legend.fontsize'] = 14
 
 class Simulator:
     eps = 1e-16
@@ -191,7 +197,10 @@ class Simulator:
 
         self.fig.canvas.draw()
         # This is crucial for viewing the plots from the command line:
-        plt.pause(1)
+        try:
+            plt.pause(0.5)
+        except Exception:
+            pass
 
         if plot_sides:
             for agent in range(self.num_agents):
