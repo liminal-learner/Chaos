@@ -5,7 +5,7 @@ A short demo and simulator of chaotic systems, including the chaotic love triang
 pandas, matplotlib, scipy, seaborn, numpy, random
 
 ## Files:
-The jupyternotebook is [here](https://nbviewer.jupyter.org/github/liminal-learner/Chaos/blob/master/Chaos.ipynb). 
+The jupyternotebook is [here](https://nbviewer.jupyter.org/github/liminal-learner/Chaos/blob/master/notebooks/Chaos.ipynb). 
 
 ## Example Usage:
 
