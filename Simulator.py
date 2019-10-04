@@ -271,7 +271,6 @@ class Simulator:
                     self.converged_at_iteration = self.iteration
                     self.X = self.X[:, np.arange(self.iteration+1)]
                     self.Y = self.Y[:, np.arange(self.iteration+1)]
-                    print("Here")
                     break
 
             self._update_positions()
