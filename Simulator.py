@@ -269,6 +269,8 @@ class Simulator:
             if self.iteration > 100: # Don't bother with convergence rules unless dealing with a significant simulation
                 if all( ms <= self.convergence_tol for ms in self.mean_step[self.iteration - 100: self.iteration + 1] ):
                     self.converged_at_iteration = self.iteration
+                    self.X = self.X[0:self.iteration + 1]
+                    self.Y = self.Y[0:self.iteration + 1]
                     break
 
             self._update_positions()
@@ -305,5 +307,5 @@ class Simulator:
             self.ax2.set_xlabel("Iteration")
             self.ax2.set_title("Motion of Agents")
 
-
+        return (X, Y, mean_step, converged_at_iteration)
 # Note if this converges before num_iterations, there will be zeros for last part of X,Y
