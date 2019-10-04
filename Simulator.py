@@ -69,6 +69,18 @@ class Simulator:
 
         return vertex_options
 
+    def __find_projections(self, target_location_x, target_location_y, current_x, current_y):
+        R_vect = np.array([target_location_x - current_x, target_location_y - current_y])
+        Rx_vect = np.array([target_location_x - current_x, 0])
+        Ry_vect = np.array([0, target_location_y - current_y])
+
+        # Make the distance travelled a proportion of R_vect
+        x_projection = self.step_size * np.dot(Rx_vect, R_vect) / (np.linalg.norm(Rx_vect) + Simulator.eps)
+        y_projection = self.step_size * np.dot(Ry_vect, R_vect) / (np.linalg.norm(Ry_vect) + Simulator.eps)
+
+        signed_projection = np.sign(R_vect) * np.array([x_projection, y_projection])
+        return (signed_projection[0], signed_projection[1])
+
     def __initialize_positions(self):
 
         # Container for the whole simulation:
@@ -122,6 +134,10 @@ class Simulator:
         with the agent and the agent's two targets. However, everyone is jumping at the same time so these
         triangles are not likely to be formed until later in the simulation (if ever)
         """
+        if self.step_size is not None:
+            if self.step_size > 1:
+                raise Exception('The step size should be less than 1')
+
         for agent in range(self.num_agents):
 
             # Find the points where you want to go to complete the triangle
@@ -141,24 +157,38 @@ class Simulator:
             options_x = options_x[~out_of_bounds]
             options_y = options_y[~out_of_bounds]
 
+            current_x = self.X[agent, self.iteration]
+            current_y = self.Y[agent, self.iteration]
+
             # Update the next position
             if len(options_x) > 1:
-                D1 = ( (options_x[0] - self.X[agent, self.iteration])**2 + \
-                     (options_y[0] - self.Y[agent, self.iteration])**2 )**0.5
-                D2 = ( (options_x[1] - self.X[agent, self.iteration])**2 + \
-                       (options_y[1] - self.Y[agent, self.iteration])**2 )**0.5
+                # Distance to first & second options:
+                D1 = ( (options_x[0] - current_x)**2 + (options_y[0] - current_y)**2 )**0.5
+                D2 = ( (options_x[1] - current_x)**2 + (options_y[1] - current_y)**2 )**0.5
                 closest_ind = np.argmin([D1, D2])
 
-                self.X[agent, self.iteration + 1] = options_x[closest_ind]
-                self.Y[agent, self.iteration + 1] = options_y[closest_ind]
+                if self.step_size is not None:
+                    x_projection, y_projection = self.__find_projections(options_x.item(closest_ind), \
+                                            options_y.item(closest_ind), current_x, current_y)
+                    self.X[agent, self.iteration + 1] = current_x + x_projection
+                    self.Y[agent, self.iteration + 1] = current_y + y_projection
+                else:
+                    self.X[agent, self.iteration + 1] = options_x[closest_ind]
+                    self.Y[agent, self.iteration + 1] = options_y[closest_ind]
 
             elif len(options_x) == 1:
-                self.X[agent, self.iteration + 1] = options_x
-                self.Y[agent, self.iteration + 1] = options_y
+                if self.step_size is not None:
+                    x_projection, y_projection = self.__find_projections(options_x.item(0), \
+                                            options_y.item(0), current_x, current_y)
+                    self.X[agent, self.iteration + 1] = current_x + x_projection
+                    self.Y[agent, self.iteration + 1] = current_y + y_projection
+                else:
+                    self.X[agent, self.iteration + 1] = options_x
+                    self.Y[agent, self.iteration + 1] = options_y
 
             else: # Don't change position
-                self.X[agent, self.iteration + 1] = self.X[agent, self.iteration]
-                self.Y[agent, self.iteration + 1] = self.Y[agent, self.iteration]
+                self.X[agent, self.iteration + 1] = current_x
+                self.Y[agent, self.iteration + 1] = current_y
 
     def plot_positions(self, initialize_plot, plot_sides = False, zoom = False):
 
@@ -261,7 +291,13 @@ class Simulator:
             else:
                 initialize = False
 
-            self.plot_positions(initialize, plot_sides, zoom = True)
+
+            #if self.step_size is not None:
+            #    zoom = True
+            #else:
+            #    zoom = False
+
+            self.plot_positions(initialize, plot_sides)
 
             self.fig2, self.ax2  = plt.subplots(nrows = 1, ncols = 1, figsize=(8, 4))
             self.ax2.plot(self.mean_step)
