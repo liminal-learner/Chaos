@@ -1,5 +1,5 @@
 # Chaos (Python)
-A short demo and simulator of chaotic systems, including the chaotic love triangle game.
+A demo and simulator of chaotic systems, including the chaotic "love triangle" game. I learned this game in a dance class, but was curious about how the system would behave if we varied the parameters like the number of agents, shape of the room, etc. Therefore, I decided to code it as a numerical simulation. I also presented it to a class that was considering the possible contribution of chaos to the notion of "agency" as part of my work as a research assistant in theology and science.
 
 ## Dependencies: 
 pandas, matplotlib, scipy, seaborn, numpy, random
@@ -29,28 +29,28 @@ Everyone starts at random positions in the room and the game progresses as peopl
 
 Ultimately, I want to know what kinds of features influence convergence (number of agents, shape of room, initial proximity and obstacles between targets and agent, constraints on speed, knowledge of target's trajectories, etc). Convergence is declared once the mean step size of all agents has dropped below a given threshold for 100 iterations.
 
-I am also interested in whether I can get a machine learning system to learn who everyone is following. The simulator can generate data for training.
+I am also interested in whether I can get a machine learning system to learn who everyone is following. The simulator can generate data for training. This might be useful for certain applications in surveillance or sports.
 
 # 2. Discover:
-* There is no exploratory data analysis for this project yet, only a simulator. The outputs of several runs of this simulator with different settings will be used as input for an EDA.
+* There is no extensive exploratory data analysis for this project yet. The outputs of several runs of this simulator with different settings will be used as input for an EDA.
 
 
 # 3. Develop:
 ## Version 1: "Blind" leaps
 * step_size = None, the default
 * "Blind" because the agent jumps directly to the point that would create an equilateral triangle with her targets, without knowing where the targets will jump in the next iteration
-* 
+
 
 ## Version 2: "Blind" baby steps
 * Set step_size = 0.2, the agent moves 20% of the distance to the desired vertex
 * "Blind" because the agent takes a step toward the point that would create an equilateral triangle with his targets, without knowing anything about the trajectory of the targets 
-* 
+
 
 ## Results:
-* 
 
+To-do.
 
 
 # 4. Deploy:
 
-
+To-do.
