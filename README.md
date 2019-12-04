@@ -5,9 +5,9 @@ A demo and simulator of chaotic systems, including the chaotic "love triangle" g
 pandas, matplotlib, scipy, seaborn, numpy, random
 
 ## Files:
-The jupyternotebook is [here](https://nbviewer.jupyter.org/github/liminal-learner/Chaos/blob/master/notebooks/Chaos.ipynb). 
+For an overview of the presentation, take a look at the jupyternotebook [HERE](https://nbviewer.jupyter.org/github/liminal-learner/Chaos/blob/master/notebooks/Chaos.ipynb). 
 
-## Example Usage:
+## To run the simulation yourself:
 
 ~~~ 
 from Chaos.Simulator import Simulator; 
@@ -48,9 +48,9 @@ I am also interested in whether I can get a machine learning system to learn who
 
 ## Results:
 
-To-do.
+(Future work: Use the simulator to generate data for an exploratory data analysis.)
 
 
 # 4. Deploy:
 
-To-do.
+(Future work: deploy a model that predicts who everyone is following.)
